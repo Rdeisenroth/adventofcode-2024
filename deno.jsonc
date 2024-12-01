@@ -19,6 +19,7 @@
         "indentWidth": 4,
         "semiColons": true,
         "singleQuote": false,
-        "useTabs": false
+        "useTabs": false,
+        "lineWidth": 160
     }
 }

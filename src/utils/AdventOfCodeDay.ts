@@ -7,7 +7,7 @@ export abstract class AdventOfCodeDay {
      * Creates a new challenge day instance.
      * @param day The day number (will get padded for input paths).
      */
-    constructor(readonly day: number) { }
+    constructor(readonly day: number) {}
 
     /**
      * Gets the path to the input file for this day for either test or real data, and for either part 1 or part 2.
@@ -55,10 +55,7 @@ export abstract class AdventOfCodeDay {
      * @param test true if the test input was used, false for the real input.
      */
     private logDayPartResult(part: number, result: string, test: boolean) {
-        console.log(
-            `----Day ${this.day} part ${part} ${test ? "test" : ""
-            }---- \n${result}`,
-        );
+        console.log(`----Day ${this.day} part ${part} ${test ? "test" : ""}---- \n${result}`);
     }
 
     /**
