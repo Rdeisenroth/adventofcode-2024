@@ -11,7 +11,7 @@ export enum Direction {
     UP = "U",
     DOWN = "D",
     LEFT = "L",
-    RIGHT = "R"
+    RIGHT = "R",
 }
 
 export enum Direction8 {
@@ -22,7 +22,7 @@ export enum Direction8 {
     UP_LEFT,
     UP_RIGHT,
     DOWN_LEFT,
-    DOWN_RIGHT
+    DOWN_RIGHT,
 }
 export interface directionVector {
     x: number;
@@ -54,18 +54,17 @@ export const directions8: directionVector8[] = [
     { x: 1, y: -1, dir: Direction8.DOWN_RIGHT },
 ];
 
-export type Point = { x: number, y: number };
+export type Point = { x: number; y: number };
 
 export function move(p: Point, dir: Direction): Point {
-    const d = directions.find(d => d.dir === dir)!;
+    const d = directions.find((d) => d.dir === dir)!;
     return { x: p.x + d.x, y: p.y + d.y };
 }
 
 export function move8(p: Point, dir: Direction8): Point {
-    const d = directions8.find(d => d.dir === dir)!;
+    const d = directions8.find((d) => d.dir === dir)!;
     return { x: p.x + d.x, y: p.y + d.y };
 }
-
 
 /**
  * Returns an array of numbers from l to u
@@ -73,10 +72,10 @@ export function move8(p: Point, dir: Direction8): Point {
  * @param u upper bound, exclusive
  * @returns array of numbers from l to u
  */
-export const range = (l = 0, u: number) => [...Array(u - l).keys()].map(x => x + l);
+export const range = (l = 0, u: number) => [...Array(u - l).keys()].map((x) => x + l);
 
 export function getDirectionFromLetter(letter: string): Direction {
-    const dir = directions.find(d => d.dir === letter)?.dir;
+    const dir = directions.find((d) => d.dir === letter)?.dir;
     if (dir === undefined) {
         throw new Error(`Unknown direction ${letter}`);
     }
@@ -84,7 +83,7 @@ export function getDirectionFromLetter(letter: string): Direction {
 }
 
 export function getDirectionVectorFromLetter(letter: string): directionVector {
-    const dir = directions.find(d => d.dir === letter);
+    const dir = directions.find((d) => d.dir === letter);
     if (dir === undefined) {
         throw new Error(`Unknown direction ${letter}`);
     }
