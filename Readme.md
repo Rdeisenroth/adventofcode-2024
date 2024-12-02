@@ -50,7 +50,8 @@ deno test --allow-read
 ### Linting
 
 ```bash
-npm run lint
+deno lint
+deno fmt
 ```
 
 ### Generating new day
