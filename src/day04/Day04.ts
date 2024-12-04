@@ -77,16 +77,12 @@ export class Day04 extends AdventOfCodeDay {
 
                 for (const dir of dirs) {
                     const [dx, dy] = dir;
-                    // corner 1
-                    if (!(grid[y + dy]?.[x + dx] === "M" && grid[y - dy]?.[x - dx] === "S")) {
+                    if (grid[y + dy]?.[x + dx] !== "M" || grid[y - dy]?.[x - dx] !== "S") {
                         continue;
                     }
                     // rotate 90 to the right
                     const rotatedDir: [number, number] = [dy, -dx];
-                    // check if the first letter is an M
-                    if (
-                        (grid[y + rotatedDir[1]]?.[x + rotatedDir[0]] === "M" && grid[y - rotatedDir[1]]?.[x - rotatedDir[0]] === "S")
-                    ) {
+                    if (grid[y + rotatedDir[1]]?.[x + rotatedDir[0]] === "M" && grid[y - rotatedDir[1]]?.[x - rotatedDir[0]] === "S") {
                         count++;
                         break;
                     }
