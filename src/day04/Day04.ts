@@ -61,31 +61,16 @@ export class Day04 extends AdventOfCodeDay {
     solvePart2(input: string): string {
         // search X-Pattern MAS String
         let count = 0;
+        let target = "M".charCodeAt(0) + "S".charCodeAt(0);
         const grid: string[][] = lines(input).map((line) => line.split(""));
-        for (let y = 0; y < grid.length; y++) {
-            for (let x = 0; x < grid[y].length; x++) {
-                if (grid[y][x] !== "A") {
-                    continue;
-                }
-
-                const dirs: [number, number][] = [
-                    [1, 1],
-                    [-1, 1],
-                    [-1, -1],
-                    [1, -1],
-                ];
-
-                for (const dir of dirs) {
-                    const [dx, dy] = dir;
-                    if (grid[y + dy]?.[x + dx] !== "M" || grid[y - dy]?.[x - dx] !== "S") {
-                        continue;
-                    }
-                    // rotate 90 to the right
-                    const rotatedDir: [number, number] = [dy, -dx];
-                    if (grid[y + rotatedDir[1]]?.[x + rotatedDir[0]] === "M" && grid[y - rotatedDir[1]]?.[x - rotatedDir[0]] === "S") {
-                        count++;
-                        break;
-                    }
+        for (let y = 1; y < grid.length - 1; y++) {
+            for (let x = 1; x < grid[y].length - 1; x++) {
+                if (
+                    grid[y][x] === "A"
+                    && grid[y - 1][x - 1].charCodeAt(0) + grid[y + 1][x + 1].charCodeAt(0) === target
+                    && grid[y - 1][x + 1].charCodeAt(0) + grid[y + 1][x - 1].charCodeAt(0) === target
+                ) {
+                    count++;
                 }
             }
         }
