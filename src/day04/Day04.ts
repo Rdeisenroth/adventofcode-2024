@@ -61,14 +61,14 @@ export class Day04 extends AdventOfCodeDay {
     solvePart2(input: string): string {
         // search X-Pattern MAS String
         let count = 0;
-        let target = "M".charCodeAt(0) + "S".charCodeAt(0);
+        const target = "M".charCodeAt(0) + "S".charCodeAt(0);
         const grid: string[][] = lines(input).map((line) => line.split(""));
         for (let y = 1; y < grid.length - 1; y++) {
             for (let x = 1; x < grid[y].length - 1; x++) {
                 if (
-                    grid[y][x] === "A"
-                    && grid[y - 1][x - 1].charCodeAt(0) + grid[y + 1][x + 1].charCodeAt(0) === target
-                    && grid[y - 1][x + 1].charCodeAt(0) + grid[y + 1][x - 1].charCodeAt(0) === target
+                    grid[y][x] === "A" &&
+                    grid[y - 1][x - 1].charCodeAt(0) + grid[y + 1][x + 1].charCodeAt(0) === target &&
+                    grid[y - 1][x + 1].charCodeAt(0) + grid[y + 1][x - 1].charCodeAt(0) === target
                 ) {
                     count++;
                 }
