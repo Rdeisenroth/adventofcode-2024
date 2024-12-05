@@ -32,10 +32,7 @@ export class Day05 extends AdventOfCodeDay {
     sortPages(pages: number[], rules: [number, number][]): number[] {
         return pages.toSorted((a, b) => {
             const rule = rules.find((r) => (r[0] === a && r[1] === b) || (r[0] === b && r[1] === a));
-            if (rule) {
-                return a === rule[0] ? -1 : 1;
-            }
-            return 0;
+            return rule ? a === rule[0] ? -1 : 1 : 0;
         });
     }
 
