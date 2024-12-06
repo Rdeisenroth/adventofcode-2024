@@ -33,9 +33,11 @@ export class Day06 extends AdventOfCodeDay {
         const curDir= {x: 0, y: -1};
         const curPos: Point = start;
         let steps = 0;
+        const positions:Point[] = [];
         // while in bounds
         while (curPos.x >= 0 && curPos.x < ilines[0].length && curPos.y >= 0 && curPos.y < ilines.length) {
             // check if there is a wall in front
+            positions.push({x: curPos.x, y: curPos.y});
             const nextPos:Point = {x: curPos.x + curDir.x, y: curPos.y + curDir.y};
             if(obstacles.find(o => o.x === nextPos.x && o.y === nextPos.y)) {
                 // if there is a wall, turn right
@@ -49,7 +51,9 @@ export class Day06 extends AdventOfCodeDay {
                 steps++;
             }
         }
-        return steps.toString();
+        // count unique positions
+        const uniquePositions = _.uniqWith(positions, _.isEqual);
+        return uniquePositions.length.toString();
     }
 
     // deno-lint-ignore no-unused-vars
