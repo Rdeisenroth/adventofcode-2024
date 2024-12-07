@@ -13,7 +13,6 @@ export class Day01 extends AdventOfCodeDay {
     constructor() {
         super(1);
     }
-    // deno-lint-ignore no-unused-vars
     solvePart1(input: string): string {
         const left: number[] = [];
         const right: number[] = [];
@@ -31,7 +30,6 @@ export class Day01 extends AdventOfCodeDay {
         }
         return sum.toString();
     }
-    // deno-lint-ignore no-unused-vars
     solvePart2(input: string): string {
         const left: number[] = [];
         const right: number[] = [];

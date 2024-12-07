@@ -13,7 +13,6 @@ export class Day03 extends AdventOfCodeDay {
         super(3);
     }
 
-    // deno-lint-ignore no-unused-vars
     solvePart1(input: string): string {
         const mulReg = /mul\((?<m1>\d+),(?<m2>\d+)\)/g;
         const mulMatches = [...input.matchAll(mulReg)];
@@ -22,7 +21,6 @@ export class Day03 extends AdventOfCodeDay {
         }).reduce((acc, val) => acc + val, 0).toString();
     }
 
-    // deno-lint-ignore no-unused-vars
     solvePart2(input: string): string {
         const insReg = /(?<mul>mul\((?<m1>\d+),(?<m2>\d+)\))|(?<do>do\(\))|(?<dont>don\'t\(\))/g;
         const mulMatches = [...input.matchAll(insReg)];

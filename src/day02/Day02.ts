@@ -14,7 +14,6 @@ export class Day02 extends AdventOfCodeDay {
         super(2);
     }
 
-    // deno-lint-ignore no-unused-vars
     solvePart1(input: string): string {
         const res = lines(input).map((l) => {
             const nums = l.split(" ").map((n) => parseInt(n));
@@ -49,7 +48,6 @@ export class Day02 extends AdventOfCodeDay {
         return true;
     }
 
-    // deno-lint-ignore no-unused-vars
     solvePart2(input: string): string {
         const res = lines(input).map((l) => {
             const nums = l.split(" ").map((n) => parseInt(n));
