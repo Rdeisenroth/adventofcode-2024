@@ -21,5 +21,11 @@
         "singleQuote": false,
         "useTabs": false,
         "lineWidth": 160
+    },
+    "compilerOptions": {
+        "lib": [
+            "deno.window",
+            "deno.worker"
+        ]
     }
 }

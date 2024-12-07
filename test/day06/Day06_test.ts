@@ -10,8 +10,8 @@ Deno.test("test part 1", () => {
     assertEquals(result, "5404");
 });
 
-Deno.test("test part 2", () => {
-    const input = dayImpl.getInput(true, 2);
-    const result = dayImpl.solvePart2(input);
-    assertEquals(result, "6");
+Deno.test("test part 2", async () => {
+    const input = dayImpl.getInput(false, 2);
+    const result = await dayImpl.solvePart2(input);
+    assertEquals(result, "1984");
 });

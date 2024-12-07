@@ -41,12 +41,12 @@ export abstract class AdventOfCodeDay {
      * Solves part 1 of the challenge.
      * @param input The input data as a string.
      */
-    public abstract solvePart1(input: string): string;
+    public abstract solvePart1(input: string): Promise<string> | string;
     /**
      * Solves part 2 of the challenge.
      * @param input The input data as a string.
      */
-    public abstract solvePart2(input: string): string;
+    public abstract solvePart2(input: string): Promise<string> | string;
 
     /**
      * Logs the result of a part of the challenge to the console.
@@ -61,26 +61,26 @@ export abstract class AdventOfCodeDay {
     /**
      * runs the challenge for both parts. The output is logged to the console.
      */
-    public run() {
+    public async run() {
         this.logDayPartResult(
             1,
-            this.solvePart1(this.getInput(false, 1)),
+            await this.solvePart1(this.getInput(false, 1)),
             false,
         );
         this.logDayPartResult(
             2,
-            this.solvePart2(this.getInput(false, 2)),
+            await this.solvePart2(this.getInput(false, 2)),
             false,
         );
     }
     /**
      * runs the challenge for both parts with test data. The output is logged to the console.
      */
-    public runTest() {
-        this.logDayPartResult(1, this.solvePart1(this.getInput(true, 1)), true);
+    public async runTest() {
+        this.logDayPartResult(1, await this.solvePart1(this.getInput(true, 1)), true);
         this.logDayPartResult(
             2,
-            this.solvePart2(this.getInput(true, 2)),
+            await this.solvePart2(this.getInput(true, 2)),
             true,
         );
     }

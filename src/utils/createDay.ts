@@ -46,6 +46,7 @@ function dryWriteFile(file: string, content: string) {
     }
 }
 
+// deno-lint-ignore no-unused-vars
 function dryCopyFile(src: string, dest: string) {
     console.log(`Copying file ${src} to ${dest}`);
     if (!flags.dry) {

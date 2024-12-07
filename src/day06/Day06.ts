@@ -1,10 +1,26 @@
-import { Direction, lines, type Point } from "@utils/util.ts";
+import { lines, type Point } from "@utils/util.ts";
 // @deno-types="@types/lodash"
 import _ from "lodash";
 // deno-lint-ignore no-unused-vars
 import * as mathjs from "mathjs";
 
 import { AdventOfCodeDay } from "@utils/AdventOfCodeDay.ts";
+
+export interface Chunk {
+    startX: number;
+    endX: number;
+    startY: number;
+    endY: number;
+}
+
+export interface WorkerData {
+    chunk: Chunk;
+    obstacles: Point[];
+    start: Point;
+    startDir: Point;
+    width: number;
+    height: number;
+}
 
 /**
  * The solution for Day 06.
@@ -59,7 +75,6 @@ export class Day06 extends AdventOfCodeDay {
         return false;
     }
 
-    // deno-lint-ignore no-unused-vars
     solvePart1(input: string): string {
         console.profile("Day06Part1");
         const ilines = lines(input);
@@ -97,14 +112,13 @@ export class Day06 extends AdventOfCodeDay {
         return positions.size.toString();
     }
 
-    // deno-lint-ignore no-unused-vars
-    solvePart2(input: string): string {
-        // We can place one mor obstacle anywhere. Count the amount of placements that result in a loop
+    async solvePart2(input: string): Promise<string> {
         console.profile("Day06Part2");
-        const ilines = lines(input);
+        const ilines: string[] = lines(input);
         const obstacles: Point[] = [];
         const start: Point = { x: -1, y: -1 };
         const startDir: Point = { x: 0, y: -1 };
+
         for (let y = 0; y < ilines.length; y++) {
             for (let x = 0; x < ilines[y].length; x++) {
                 if (ilines[y][x] === "#") {
@@ -115,23 +129,51 @@ export class Day06 extends AdventOfCodeDay {
                 }
             }
         }
-        const validCoords: Point[] = [];
-        // add one more obstacle
-        for (let y = 0; y < ilines.length; y++) {
-            for (let x = 0; x < ilines[y].length; x++) {
-                if (obstacles.find((o) => o.x === x && o.y === y) || (start.x === x && start.y === y)) {
-                    continue;
-                }
-                console.log(`Progress: ${(((y * ilines[0].length) + x) / (ilines[0].length * ilines.length)) * 100}%`);
-                const newObstacles = [...obstacles, { x, y }];
-                if (this.isLoop(newObstacles, start, startDir, ilines[0].length, ilines.length)) {
-                    validCoords.push({ x, y });
-                }
-            }
+
+        const width: number = ilines[0].length;
+        const height: number = ilines.length;
+        const threadCount = navigator.hardwareConcurrency || 4;
+        const chunkSize: number = Math.ceil(height / threadCount);
+        const promises: Promise<Point[]>[] = [];
+        let doneWorkers = 0;
+
+        for (let i = 0; i < threadCount; i++) {
+            const startY: number = i * chunkSize;
+            const endY: number = Math.min(startY + chunkSize, height);
+            const workerData: WorkerData = {
+                chunk: { startX: 0, endX: width, startY, endY },
+                obstacles,
+                start,
+                startDir,
+                width,
+                height,
+            };
+
+            promises.push(
+                new Promise((resolve, reject) => {
+                    const worker = new Worker(new URL("./worker.ts", import.meta.url).href, { type: "module" });
+                    worker.postMessage(workerData);
+                    worker.onmessage = (e: MessageEvent<Point[]>) => {
+                        doneWorkers++;
+                        console.log(`Worker ${i} done (${(doneWorkers / threadCount * 100).toFixed(2)}%)`);
+                        worker.terminate();
+                        resolve(e.data);
+                    };
+                    worker.onerror = reject;
+                    worker.onmessageerror = reject;
+                }),
+            );
         }
-        console.profileEnd("Day06Part2");
-        // console.log(JSON.stringify(validCoords));
-        return validCoords.length.toString();
+
+        try {
+            const results = await Promise.all(promises);
+            const validCoords: Point[] = results.flat();
+            console.profileEnd("Day06Part2");
+            return validCoords.length.toString();
+        } catch (err) {
+            console.error(err);
+            return "0";
+        }
     }
 }
 
