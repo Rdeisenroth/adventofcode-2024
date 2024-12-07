@@ -128,3 +128,5 @@ next-env.d.ts
 
 data/day*.txt
 !data/day-1.txt
+*.cpuprofile
+*.heapprofile
