@@ -29,40 +29,44 @@ export class Day07 extends AdventOfCodeDay {
         })
     }
 
-    operations: ((a: number, b: number) => number)[] = [
-        (a, b) => a + b,
-        (a, b) => a * b,
-    ]
-
-    verifyEquationPossibleBacktrack(equation: Equation, index: number, current: number): boolean {
+    verifyEquationPossibleBacktrack(equation: Equation, index: number, current: number, operations: ((a: number, b: number) => number)[]): boolean {
         if (index === equation.nums.length) {
             return current === equation.verify;
         }
-        for (const op of this.operations) {
-            if (this.verifyEquationPossibleBacktrack(equation, index + 1, op(current, equation.nums[index]))) {
+        for (const op of operations) {
+            if (this.verifyEquationPossibleBacktrack(equation, index + 1, op(current, equation.nums[index]), operations)) {
                 return true;
             }
         }
         return false;
     }
 
-    verifyEquationPossible(equation: Equation): boolean {
+    verifyEquationPossible(equation: Equation, operations: ((a: number, b: number) => number)[]): boolean {
         if (equation.nums.length === 1) {
             return equation.nums[0] === equation.verify;
         }
-        return this.verifyEquationPossibleBacktrack(equation, 1, equation.nums[0]);
+        return this.verifyEquationPossibleBacktrack(equation, 1, equation.nums[0], operations);
     }
 
-    // deno-lint-ignore no-unused-vars
     solvePart1(input: string): string {
         const equations = this.parse(input);
-        const valid = equations.filter(e => this.verifyEquationPossible(e));
+        const operations: ((a: number, b: number) => number)[] = [
+            (a, b) => a + b,
+            (a, b) => a * b,
+        ];
+        const valid = equations.filter(e => this.verifyEquationPossible(e, operations));
         return valid.map(e => e.verify).reduce((a, b) => a + b, 0).toString();
     }
 
-    // deno-lint-ignore no-unused-vars
     solvePart2(input: string): string {
-        throw new Error("Method not implemented.");
+        const equations = this.parse(input);
+        const operations: ((a: number, b: number) => number)[] = [
+            (a, b) => a + b,
+            (a, b) => a * b,
+            (a, b) => parseInt(`${a}${b}`),
+        ];
+        const valid = equations.filter(e => this.verifyEquationPossible(e, operations));
+        return valid.map(e => e.verify).reduce((a, b) => a + b, 0).toString();
     }
 }
 
