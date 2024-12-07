@@ -5,16 +5,12 @@ import _ from "lodash";
 import * as mathjs from "mathjs";
 
 import { AdventOfCodeDay } from "@utils/AdventOfCodeDay.ts";
+import { getUniqueLoopCoords, isInBounds } from "@/day06/worker.ts";
+import { nextMove } from "@/day06/worker.ts";
 
-export interface Chunk {
-    startX: number;
-    endX: number;
-    startY: number;
-    endY: number;
-}
 
 export interface WorkerData {
-    chunk: Chunk;
+    chunk: Point[];
     obstacles: Point[];
     start: Point;
     startDir: Point;
@@ -28,51 +24,6 @@ export interface WorkerData {
 export class Day06 extends AdventOfCodeDay {
     constructor() {
         super(6);
-    }
-
-    nextMove(opstacles: Point[], pos: Point, dir: Point): Point | null {
-        let nextPos: Point = { x: pos.x + dir.x, y: pos.y + dir.y };
-        // check if there is an obstacle
-        let turns = 0;
-        // while there is a wall, turn right
-        while (opstacles.find((o) => o.x === nextPos.x && o.y === nextPos.y)) {
-            if (turns === 4) {
-                return null;
-            }
-            const oldX = dir.x;
-            dir.x = -dir.y;
-            dir.y = oldX;
-            nextPos = { x: pos.x + dir.x, y: pos.y + dir.y };
-            turns++;
-        }
-        // if there is no wall, move forward
-        return nextPos;
-    }
-
-    isInBounds(point: Point, width: number, height: number): boolean {
-        return point.x >= 0 && point.x < width && point.y >= 0 && point.y < height;
-    }
-
-    isLoop(opstacles: Point[], pos: Point, dir: Point, width: number, height: number): boolean {
-        const curDir = { x: dir.x, y: dir.y };
-        const curPos: Point = { x: pos.x, y: pos.y };
-        const visited: Set<string> = new Set();
-        const maxSteps = 100_000;
-        let steps = 0;
-        while (this.isInBounds(curPos, width, height)) {
-            if (steps > maxSteps) {
-                throw new Error("Too large, possible logic error");
-            }
-            visited.add(`${curPos.x},${curPos.y},${curDir.x},${curDir.y}`);
-            const nextPos = this.nextMove(opstacles, curPos, curDir);
-            if (!nextPos || visited.has(`${nextPos.x},${nextPos.y},${curDir.x},${curDir.y}`)) {
-                return true;
-            }
-            curPos.x = nextPos.x;
-            curPos.y = nextPos.y;
-            steps++;
-        }
-        return false;
     }
 
     solvePart1(input: string): string {
@@ -90,26 +41,10 @@ export class Day06 extends AdventOfCodeDay {
                 }
             }
         }
-        const curDir = { x: 0, y: -1 };
-        const curPos: Point = start;
-        let steps = 0;
-        const positions: Set<string> = new Set();
-        // while in bounds
-        while (this.isInBounds(curPos, ilines[0].length, ilines.length)) {
-            // check if there is a wall in front
-            const nextPos = this.nextMove(obstacles, curPos, curDir);
-            if (nextPos) {
-                curPos.x = nextPos.x;
-                curPos.y = nextPos.y;
-                steps++;
-                positions.add(`${curPos.x},${curPos.y}`);
-            } else {
-                throw new Error("Stuck");
-            }
-        }
+        const res = getUniqueLoopCoords(obstacles, start, { x: 0, y: -1 }, ilines[0].length, ilines.length);
         // count unique positions
         console.profileEnd("Day06Part1");
-        return positions.size.toString();
+        return res.length.toString();
     }
 
     async solvePart2(input: string): Promise<string> {
@@ -132,16 +67,18 @@ export class Day06 extends AdventOfCodeDay {
 
         const width: number = ilines[0].length;
         const height: number = ilines.length;
-        const threadCount = navigator.hardwareConcurrency || 4;
-        const chunkSize: number = Math.ceil(height / threadCount);
+
+        const loopCords = getUniqueLoopCoords(obstacles, start, startDir, width, height).filter((p) => isInBounds(p, width, height));
+        const threadCount = Math.min(navigator.hardwareConcurrency || 4, loopCords.length);
+        const chunkSize: number = Math.ceil(loopCords.length / threadCount);
         const promises: Promise<Point[]>[] = [];
         let doneWorkers = 0;
 
         for (let i = 0; i < threadCount; i++) {
-            const startY: number = i * chunkSize;
-            const endY: number = Math.min(startY + chunkSize, height);
+            const startI: number = i * chunkSize;
+            const endI: number = Math.min(startI + chunkSize, loopCords.length);
             const workerData: WorkerData = {
-                chunk: { startX: 0, endX: width, startY, endY },
+                chunk: loopCords.slice(startI, endI),
                 obstacles,
                 start,
                 startDir,
@@ -155,7 +92,7 @@ export class Day06 extends AdventOfCodeDay {
                     worker.postMessage(workerData);
                     worker.onmessage = (e: MessageEvent<Point[]>) => {
                         doneWorkers++;
-                        console.log(`Worker ${i} done (${(doneWorkers / threadCount * 100).toFixed(2)}%)`);
+                        console.log(`Worker ${i} done (${(doneWorkers / threadCount * 100).toFixed(2)}% - ${doneWorkers * chunkSize}/${loopCords.length})`);
                         worker.terminate();
                         resolve(e.data);
                     };

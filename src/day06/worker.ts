@@ -1,27 +1,40 @@
 import { WorkerData } from "@/day06/Day06.ts";
 import type { Point } from "@utils/util.ts";
+// @deno-types="@types/lodash"
+import _ from "lodash";
 
 self.onmessage = (e: MessageEvent<WorkerData>) => {
     const { chunk, obstacles, start, startDir, width, height } = e.data;
     const validCoords: Point[] = [];
 
-    for (let y = chunk.startY; y < chunk.endY; y++) {
-        for (let x = chunk.startX; x < chunk.endX; x++) {
-            if (obstacles.find((o) => o.x === x && o.y === y) || (start.x === x && start.y === y)) {
-                continue;
+    for (const { x, y } of chunk) {
+        if (x === 3 && y === 6) {
+            console.log("here");
+        }
+        if (obstacles.find((o) => o.x === x && o.y === y) || (start.x === x && start.y === y)) {
+            continue;
+        }
+        const newObstacles = [...obstacles, { x, y }];
+        if (x === 3 && y === 6) {
+            console.log("here2", newObstacles, start, startDir, width, height);
+        }
+        if (isLoop(newObstacles, start, startDir, width, height)) {
+            if (x === 3 && y === 6) {
+                console.log("here3");
             }
-            const newObstacles = [...obstacles, { x, y }];
-            if (isLoop(newObstacles, start, startDir, width, height)) {
-                validCoords.push({ x, y });
-            }
+            validCoords.push({ x, y });
+        }
+        if (x === 3 && y === 6) {
+            console.log("here4");
         }
     }
 
     self.postMessage(validCoords);
 };
 
-export function nextMove(opstacles: Point[], pos: Point, dir: Point): Point | null {
-    let nextPos: Point = { x: pos.x + dir.x, y: pos.y + dir.y };
+export function nextMove(opstacles: Point[], pos: Point, dir: Point): [Point, Point] | null {
+    const nextDir: Point = { x: dir.x, y: dir.y };
+    const nextPos: Point = { x: pos.x + nextDir.x, y: pos.y + nextDir.y };
     // check if there is an obstacle
     let turns = 0;
     // while there is a wall, turn right
@@ -29,14 +42,15 @@ export function nextMove(opstacles: Point[], pos: Point, dir: Point): Point | nu
         if (turns === 4) {
             return null;
         }
-        const oldX = dir.x;
-        dir.x = -dir.y;
-        dir.y = oldX;
-        nextPos = { x: pos.x + dir.x, y: pos.y + dir.y };
+        const oldX = nextDir.x;
+        nextDir.x = -nextDir.y;
+        nextDir.y = oldX;
+        nextPos.x = pos.x + nextDir.x;
+        nextPos.y = pos.y + nextDir.y;
         turns++;
     }
     // if there is no wall, move forward
-    return nextPos;
+    return [nextPos, nextDir];
 }
 
 export function isInBounds(point: Point, width: number, height: number): boolean {
@@ -55,12 +69,43 @@ export function isLoop(opstacles: Point[], pos: Point, dir: Point, width: number
         }
         visited.add(`${curPos.x},${curPos.y},${curDir.x},${curDir.y}`);
         const nextPos = nextMove(opstacles, curPos, curDir);
-        if (!nextPos || visited.has(`${nextPos.x},${nextPos.y},${curDir.x},${curDir.y}`)) {
+        if (!nextPos || visited.has(`${nextPos[0].x},${nextPos[0].y},${nextPos[1].x},${nextPos[1].y}`)) {
             return true;
         }
-        curPos.x = nextPos.x;
-        curPos.y = nextPos.y;
+        curPos.x = nextPos[0].x;
+        curPos.y = nextPos[0].y;
+        curDir.x = nextPos[1].x;
+        curDir.y = nextPos[1].y;
         steps++;
     }
     return false;
+}
+
+export function getUniqueLoopCoords(obstacles: Point[], start: Point, startDir: Point, width: number, height: number): Point[] {
+    const curDir = _.clone(startDir);
+    const curPos: Point = _.clone(start);
+    let steps = 0;
+    const positions: Set<string> = new Set();
+    // while in bounds
+    while (isInBounds(curPos, width, height)) {
+        // check if there is a wall in front
+        const nextPos = nextMove(obstacles, curPos, curDir);
+        if (nextPos) {
+            curPos.x = nextPos[0].x;
+            curPos.y = nextPos[0].y;
+            curDir.x = nextPos[1].x;
+            curDir.y = nextPos[1].y;
+            steps++;
+            positions.add(`${curPos.x},${curPos.y}`);
+        } else {
+            throw new Error("Stuck");
+        }
+    }
+    // remove start position
+    positions.delete(`${start.x},${start.y}`);
+    // convert back to Point[]
+    return Array.from(positions).map((p) => {
+        const [x, y] = p.split(",").map((n) => parseInt(n));
+        return { x, y };
+    });
 }
