@@ -1,5 +1,5 @@
 import { WorkerData } from "@/day06/Day06.ts";
-import type { Point } from "@utils/util.ts";
+import { isInBounds, type Point } from "@utils/util.ts";
 // @deno-types="@types/lodash"
 import _ from "lodash";
 
@@ -51,10 +51,6 @@ export function nextMove(opstacles: Point[], pos: Point, dir: Point): [Point, Po
     }
     // if there is no wall, move forward
     return [nextPos, nextDir];
-}
-
-export function isInBounds(point: Point, width: number, height: number): boolean {
-    return point.x >= 0 && point.x < width && point.y >= 0 && point.y < height;
 }
 
 export function isLoop(opstacles: Point[], pos: Point, dir: Point, width: number, height: number): boolean {

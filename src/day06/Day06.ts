@@ -1,13 +1,11 @@
-import { lines, type Point } from "@utils/util.ts";
+import { isInBounds, lines, type Point } from "@utils/util.ts";
 // @deno-types="@types/lodash"
 import _ from "lodash";
 // deno-lint-ignore no-unused-vars
 import * as mathjs from "mathjs";
 
 import { AdventOfCodeDay } from "@utils/AdventOfCodeDay.ts";
-import { getUniqueLoopCoords, isInBounds } from "@/day06/worker.ts";
-import { nextMove } from "@/day06/worker.ts";
-
+import { getUniqueLoopCoords } from "@/day06/worker.ts";
 
 export interface WorkerData {
     chunk: Point[];

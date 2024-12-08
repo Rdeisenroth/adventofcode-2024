@@ -89,3 +89,11 @@ export function getDirectionVectorFromLetter(letter: string): directionVector {
     }
     return dir;
 }
+
+export function isInBounds(point: Point, width: number, height: number): boolean {
+    return point.x >= 0 && point.x < width && point.y >= 0 && point.y < height;
+}
+
+export function isValidCoordinate(p: Point, width: number, height: number): boolean {
+    return isInBounds(p, width, height) && p.x === Math.floor(p.x) && p.y === Math.floor(p.y);
+}

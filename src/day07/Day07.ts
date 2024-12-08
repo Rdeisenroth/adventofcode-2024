@@ -9,7 +9,7 @@ import { AdventOfCodeDay } from "@utils/AdventOfCodeDay.ts";
 type Equation = {
     verify: number;
     nums: number[];
-}
+};
 
 /**
  * The solution for Day 07.
@@ -20,13 +20,13 @@ export class Day07 extends AdventOfCodeDay {
     }
 
     parse(input: string): Equation[] {
-        return lines(input).map(l => {
+        return lines(input).map((l) => {
             const [verify, nums] = l.split(":");
             return {
                 verify: parseInt(verify.trim()),
-                nums: nums.trim().split(" ").map(n => parseInt(n))
-            }
-        })
+                nums: nums.trim().split(" ").map((n) => parseInt(n)),
+            };
+        });
     }
 
     verifyEquationPossibleBacktrack(equation: Equation, index: number, current: number, operations: ((a: number, b: number) => number)[]): boolean {
@@ -54,8 +54,8 @@ export class Day07 extends AdventOfCodeDay {
             (a, b) => a + b,
             (a, b) => a * b,
         ];
-        const valid = equations.filter(e => this.verifyEquationPossible(e, operations));
-        return valid.map(e => e.verify).reduce((a, b) => a + b, 0).toString();
+        const valid = equations.filter((e) => this.verifyEquationPossible(e, operations));
+        return valid.map((e) => e.verify).reduce((a, b) => a + b, 0).toString();
     }
 
     solvePart2(input: string): string {
@@ -65,8 +65,8 @@ export class Day07 extends AdventOfCodeDay {
             (a, b) => a * b,
             (a, b) => parseInt(`${a}${b}`),
         ];
-        const valid = equations.filter(e => this.verifyEquationPossible(e, operations));
-        return valid.map(e => e.verify).reduce((a, b) => a + b, 0).toString();
+        const valid = equations.filter((e) => this.verifyEquationPossible(e, operations));
+        return valid.map((e) => e.verify).reduce((a, b) => a + b, 0).toString();
     }
 }
 
