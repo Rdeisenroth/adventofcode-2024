@@ -97,3 +97,15 @@ export function isInBounds(point: Point, width: number, height: number): boolean
 export function isValidCoordinate(p: Point, width: number, height: number): boolean {
     return isInBounds(p, width, height) && p.x === Math.floor(p.x) && p.y === Math.floor(p.y);
 }
+
+export function findPositions<T>(map: T[][], predicate: (val: T) => boolean): Point[] {
+    const positions: Point[] = [];
+    for (let y = 0; y < map.length; y++) {
+        for (let x = 0; x < map[y].length; x++) {
+            if (predicate(map[y][x])) {
+                positions.push({ x, y });
+            }
+        }
+    }
+    return positions;
+}
