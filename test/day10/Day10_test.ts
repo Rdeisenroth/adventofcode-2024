@@ -10,7 +10,7 @@ Deno.test("test trailhead score", () => {
 8765
 9876`);
     assertEquals(
-        dayImpl.trailheadScore(input, { x: 0, y: 0 }),
+        dayImpl.trailheadScore(input, { x: 0, y: 0 }, false),
         1,
     );
     const input2 = dayImpl.parse(`...0...
@@ -21,7 +21,7 @@ Deno.test("test trailhead score", () => {
 8.....8
 9.....9`);
     assertEquals(
-        dayImpl.trailheadScore(input2, { x: 3, y: 0 }),
+        dayImpl.trailheadScore(input2, { x: 3, y: 0 }, false),
         2,
     );
 });
