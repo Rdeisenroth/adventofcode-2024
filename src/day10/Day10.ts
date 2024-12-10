@@ -37,7 +37,7 @@ export class Day10 extends AdventOfCodeDay {
             }
             const nextMoves = directions
                 .map((d) => move(pos, d.dir))
-                .filter((p) => isInBounds(p, map[0].length, map.length))
+                .filter((p) => isInBounds(p, map))
                 .map((p) => [p, map[p.y][p.x]] as [Point, number])
                 // deno-lint-ignore no-unused-vars
                 .filter(([p, v]) => v === val + 1);

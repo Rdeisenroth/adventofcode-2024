@@ -90,8 +90,18 @@ export function getDirectionVectorFromLetter(letter: string): directionVector {
     return dir;
 }
 
-export function isInBounds(point: Point, width: number, height: number): boolean {
+function _isInBounds(point: Point, width: number, height: number): boolean {
     return point.x >= 0 && point.x < width && point.y >= 0 && point.y < height;
+}
+
+export function isInBounds(point: Point, width: number, height: number): boolean;
+export function isInBounds(point: Point, map: unknown[][]): boolean;
+export function isInBounds(point: Point, arg2: number | unknown[][], arg3?: number): boolean {
+    if (typeof arg2 === "number") {
+        return _isInBounds(point, arg2, arg3!);
+    } else {
+        return _isInBounds(point, arg2[0].length, arg2.length);
+    }
 }
 
 export function isValidCoordinate(p: Point, width: number, height: number): boolean {
