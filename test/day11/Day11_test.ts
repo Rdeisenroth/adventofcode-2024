@@ -15,9 +15,6 @@ Deno.test("test part 1", () => {
 
 Deno.test("test part 2", () => {
     const input = dayImpl.getInput(true, 2);
-    // const result = dayImpl.solvePart2(input);
-    // assertEquals(result, "2");
-    assertThrows(() => {
-        dayImpl.solvePart2(input);
-    }, "Method not implemented.");
+    const result = dayImpl.solvePart2(input);
+    assertEquals(result, "55312");
 });
